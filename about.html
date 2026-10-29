@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="DumE Assistant is a personal assistant accessed through Telegram, with user-authorized Google Sheets and Drive features.">
+<title>DumE Assistant</title>
+<style>
+  :root { --bg:#f6f7f9; --fg:#141a22; --muted:#5d6877; --line:#d9dee5; --card:#fff5df; --accent:#1769d2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#10151c; --fg:#e8eef5; --muted:#9aa7b6; --line:#2a3340; --card:#302815; --accent:#82b4ff; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:28px 20px 48px; }
+  main { max-width:700px; margin:0 auto; }
+  .brand { color:var(--accent); font-size:13px; font-weight:750; letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px; }
+  h1 { font-size:clamp(32px,8vw,46px); line-height:1.1; margin:0 0 10px; letter-spacing:-.035em; }
+  h2 { font-size:20px; line-height:1.3; margin:28px 0 8px; }
+  p, li { margin:0 0 12px; }
+  ul { padding-left:22px; }
+  .lead { color:var(--muted); font-size:19px; margin-bottom:24px; }
+  .panel { border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin:18px 0; background:color-mix(in srgb, var(--bg) 92%, var(--accent) 8%); }
+  .warning { background:var(--card); border-left:4px solid #d58b00; border-radius:10px; padding:16px 18px; margin:24px 0; }
+  .warning strong { display:block; margin-bottom:5px; }
+  a { color:var(--accent); }
+  footer { border-top:1px solid var(--line); margin-top:32px; padding-top:18px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="brand">Personal assistant on Telegram</p>
+    <h1>DumE Assistant</h1>
+    <p class="lead">A Telegram-based assistant designed to help organize tasks, reminders, notes and scheduled workflows.</p>
+  </header>
+
+  <section>
+    <h2>What it can do</h2>
+    <p>Depending on the features enabled in the bot, DumE Assistant can help manage a task list, remember useful instructions and project details, send scheduled messages, and analyze supported media. Important changes are intended to require your confirmation before they are made.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Google account connection</h2>
+    <p>Telegram is the conversation interface. If you connect Google, the intended setup uses your own Google account for the assistant's app-related Sheet and Drive files. Google will show the permissions requested before you approve them. Do not approve a request that asks for access you do not expect.</p>
+    <p>The service is designed to keep each user's records separate, but the automation operator and the service providers needed to run the bot may process data. This is not end-to-end encryption and should not be treated as private from the operator.</p>
+  </section>
+
+  <section>
+    <h2>Large-file uploads</h2>
+    <p>The Telegram upload portal can prepare a Google Drive upload session and send a selected file to the Google account connected for that user. Check that you have connected the Google account where you want the file saved. The portal reports whether the upload was confirmed.</p>
+    <p><a href="index.html">Open the DumE Assistant Upload Portal</a></p>
+  </section>
+
+  <aside class="warning" aria-label="Important AI privacy notice">
+    <strong>Important: free Gemini API and personal information</strong>
+    <p>This version is planned to use the unpaid Gemini API for some AI replies or media analysis. Google's terms say content submitted through unpaid services may be used to improve Google products, may be reviewed by people, and should not include personal, confidential or sensitive information. Do not send private memories, personal details, passwords, health or financial information, or confidential work to a bot using the unpaid Gemini API.</p>
+    <p>Google's Gemini API terms also restrict API clients that are directed to, or likely to be accessed by, people under 18. Do not launch this version for under-18 users while it uses the Gemini API.</p>
+    <p>Read the <a href="privacy.html">Privacy Policy</a> before connecting an account or uploading a file.</p>
+  </aside>
+
+  <footer>
+    <p>DumE Assistant is an independent project and is not affiliated with Google, Telegram, or Gemini.</p>
+    <p><a href="privacy.html">Privacy Policy</a></p>
+  </footer>
+</main>
+</body>
+</html>

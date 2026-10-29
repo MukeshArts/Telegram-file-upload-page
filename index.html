@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<title>DumE Assistant Upload Portal</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg: var(--tg-theme-bg-color, #f4f6f8);
+    --fg: var(--tg-theme-text-color, #121820);
+    --muted: var(--tg-theme-hint-color, #66717f);
+    --card: var(--tg-theme-secondary-bg-color, #ffffff);
+    --accent: var(--tg-theme-button-color, #1f6feb);
+    --accent-fg: var(--tg-theme-button-text-color, #ffffff);
+    --ok: #17a05d;
+    --bad: #d8453b;
+    --line: rgba(128, 138, 150, .28);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font: 17px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  }
+  main { max-width: 440px; margin: 0 auto; }
+  h1 { font-size: 22px; line-height: 1.25; margin: 4px 0 6px; font-weight: 700; letter-spacing: -.01em; }
+  .lead { margin: 0 0 22px; color: var(--muted); }
+  .drop {
+    display: block; width: 100%; text-align: left; cursor: pointer;
+    background: var(--card); color: var(--fg);
+    border: 1.5px dashed var(--line); border-radius: 14px; padding: 18px;
+    font: inherit;
+  }
+  .drop:focus-visible, .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .drop b { display: block; font-size: 18px; margin-bottom: 2px; word-break: break-all; }
+  .drop span { color: var(--muted); font-size: 15px; }
+  input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .btn {
+    display: block; width: 100%; margin-top: 14px; padding: 15px 18px;
+    border: 0; border-radius: 12px; font: inherit; font-weight: 650;
+    background: var(--accent); color: var(--accent-fg); cursor: pointer;
+  }
+  .btn[disabled] { opacity: .45; cursor: default; }
+  .btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--line); }
+  .meter { margin-top: 26px; display: none; }
+  .pct { font-size: 64px; line-height: 1; font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .pct small { font-size: 28px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+  .bar { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; margin: 14px 0 8px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .2s linear; }
+  .bytes { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+  #status { margin-top: 18px; min-height: 1.5em; }
+  #status.ok { color: var(--ok); font-weight: 650; }
+  #status.bad { color: var(--bad); font-weight: 600; }
+  .note { margin-top: 26px; font-size: 14px; color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>DumE Assistant Upload Portal</h1>
+  <p class="lead">Pick the original file. When your Google account is connected, the portal uploads it to your Drive without the bot having to download it through Telegram.</p>
+
+  <button class="drop" id="drop" type="button">
+    <b id="fname">Choose a file</b>
+    <span id="fmeta">Video, audio or any other file</span>
+  </button>
+  <input type="file" id="pick">
+
+  <button class="btn" id="go" type="button" disabled>Upload to my Drive</button>
+  <button class="btn ghost" id="again" type="button" hidden>Try again</button>
+
+  <section class="meter" id="meter" aria-label="Upload progress">
+    <div class="pct"><span id="pct">0</span><small>%</small></div>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="bytes" id="bytes"></div>
+  </section>
+
+  <p id="status" role="status" aria-live="polite"></p>
+  <p class="note">Keep this page open until it says Saved. We try to keep your screen awake while uploading when your browser supports it.</p>
+  <p class="note">Check that the connected Google account is the one where you want the file saved. The upload service receives the file name, type and size to prepare and confirm the transfer. <a href="privacy.html">Privacy Policy</a> · <a href="about.html">About DumE Assistant</a></p>
+</main>
+
+<script>
+(function () {
+  var tgw = window.Telegram && window.Telegram.WebApp;
+  if (tgw) {
+    try { tgw.ready(); tgw.expand(); } catch (e) {}
+    try { tgw.disableVerticalSwipes(); } catch (e) {}
+  }
+  var qs = new URLSearchParams(location.search);
+  var T = qs.get('t'), API = qs.get('api');
+  var $ = function (id) { return document.getElementById(id); };
+  var enc = encodeURIComponent;
+  var file = null, busy = false, wake = null;
+
+  function mb(n) { return (n / 1048576).toFixed(n > 1073741824 ? 0 : 1) + ' MB'; }
+  function say(msg, cls) { var s = $('status'); s.textContent = msg || ''; s.className = cls || ''; }
+  function progress(loaded, total) {
+    var p = total ? Math.min(100, Math.floor(loaded / total * 100)) : 0;
+    $('pct').textContent = p; $('fill').style.width = p + '%';
+    $('bytes').textContent = mb(loaded) + ' of ' + mb(total);
+  }
+  function lock(on) {
+    if (!tgw) return;
+    try { on ? tgw.enableClosingConfirmation() : tgw.disableClosingConfirmation(); } catch (e) {}
+  }
+
+  if (!T || !API) {
+    $('drop').disabled = true;
+    say('Open this page from the Upload button in your Telegram chat.', 'bad');
+  }
+
+  $('drop').addEventListener('click', function () { if (!busy) $('pick').click(); });
+  $('pick').addEventListener('change', function () {
+    file = this.files && this.files[0] ? this.files[0] : null;
+    if (!file) return;
+    $('fname').textContent = file.name;
+    $('fmeta').textContent = mb(file.size) + ' · tap to change';
+    $('go').disabled = false; say('');
+  });
+  $('again').addEventListener('click', function () { $('again').hidden = true; $('go').hidden = false; start(); });
+  $('go').addEventListener('click', start);
+
+  function put(url, f, mime) {
+    return new Promise(function (resolve, reject) {
+      var x = new XMLHttpRequest();
+      x.open('PUT', url);
+      x.setRequestHeader('Content-Type', mime);
+      x.upload.onprogress = function (e) { if (e.lengthComputable) progress(e.loaded, e.total); };
+      x.onload = function () {
+        if (x.status >= 200 && x.status < 300) resolve();
+        else reject(new Error('The Drive upload returned an error (HTTP ' + x.status + ').'));
+      };
+      x.onerror = function () { reject(new Error('A network error interrupted the upload.')); };
+      x.onabort = function () { reject(new Error('The upload was cancelled.')); };
+      x.ontimeout = function () { reject(new Error('The upload timed out.')); };
+      x.send(f);
+    });
+  }
+
+  async function start() {
+    if (busy || !file) return;
+    busy = true; $('go').disabled = true; $('drop').disabled = true;
+    $('meter').style.display = 'block'; progress(0, file.size); lock(true);
+    try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
+    try {
+      say('Getting your upload ready…');
+      var mime = file.type || 'application/octet-stream';
+      var r = await fetch(API + '?op=init&t=' + enc(T) + '&name=' + enc(file.name) + '&mime=' + enc(mime) + '&size=' + file.size);
+      var j = await r.json();
+      if (!j.ok) throw new Error(j.error || 'Could not start the upload.');
+      say('Uploading… keep this page open.');
+      await put(j.session, file, mime);
+      say('Checking that it reached your Drive…');
+      var r2 = await fetch(API + '?op=done&t=' + enc(T) + '&name=' + enc(file.name) + '&size=' + file.size);
+      var j2 = await r2.json();
+      if (!j2.ok) throw new Error(j2.error || 'The file did not reach your Drive.');
+      progress(file.size, file.size);
+      say('Saved to your Drive ✅ Going back to the chat…', 'ok');
+      lock(false);
+      setTimeout(function () { if (tgw) { try { tgw.close(); } catch (e) {} } }, 1600);
+    } catch (e) {
+      lock(false);
+      say((e && e.message ? e.message : 'Upload failed.') + ' The result could not be confirmed. Check your Drive before retrying to avoid a duplicate.', 'bad');
+      $('go').hidden = true; $('again').hidden = false; $('drop').disabled = false;
+    } finally {
+      busy = false;
+      try { if (wake) wake.release(); } catch (e) {}
+    }
+  }
+})();
+</script>
+</body>
+</html>

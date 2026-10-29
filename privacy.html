@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Privacy Policy for DumE Assistant and its Telegram upload portal.">
+<title>Privacy Policy — DumE Assistant</title>
+<style>
+  :root { --bg:#f6f7f9; --fg:#141a22; --muted:#5d6877; --line:#d9dee5; --card:#fff5df; --accent:#1769d2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#10151c; --fg:#e8eef5; --muted:#9aa7b6; --line:#2a3340; --card:#302815; --accent:#82b4ff; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:28px 20px 48px; }
+  main { max-width:700px; margin:0 auto; }
+  h1 { font-size:clamp(30px,7vw,40px); line-height:1.15; margin:0 0 6px; letter-spacing:-.025em; }
+  h2 { font-size:20px; line-height:1.3; margin:28px 0 8px; }
+  p, li { margin:0 0 12px; }
+  ul { padding-left:22px; }
+  .muted { color:var(--muted); }
+  .notice { background:var(--card); border-left:4px solid #d58b00; border-radius:10px; padding:16px 18px; margin:22px 0; }
+  a { color:var(--accent); }
+  footer { border-top:1px solid var(--line); margin-top:32px; padding-top:18px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Privacy Policy</h1>
+    <p class="muted">DumE Assistant · Last updated: 29 October 2026</p>
+  </header>
+
+  <p>This policy covers the DumE Assistant Telegram bot and its upload portal. Some features may not be enabled in every version. The permissions shown on Google's consent screen and the behavior of the deployed n8n workflow determine the actual access used.</p>
+
+  <section class="notice" aria-label="Important Gemini API notice">
+    <h2>Important notice about the free Gemini API</h2>
+    <p>This version is planned to use the unpaid Gemini API for some replies or media analysis. Google's terms say content submitted to unpaid Gemini services—including prompts, uploaded files and generated responses—may be used to provide, improve and develop Google products. Human reviewers may read or process submitted content. Google says not to submit personal, confidential or sensitive information to unpaid services.</p>
+    <p>For that reason, do not use this unpaid-Gemini version for private memories, personal details, passwords, health or financial information, or confidential work. Google's Gemini API terms also prohibit using the API as part of an application directed to, or likely to be accessed by, people under 18. Do not make this version available to under-18 users while it uses Gemini API.</p>
+  </section>
+
+  <h2>Who operates DumE Assistant</h2>
+  <p>DumE Assistant is operated by the project owner. For a privacy question or deletion request, contact the operator through the DumE Assistant Telegram bot. A support email should also be provided in the Google consent screen.</p>
+
+  <h2>Information the service handles</h2>
+  <ul>
+    <li><strong>Telegram information:</strong> your Telegram numeric user and chat IDs, display name or username when available, messages and commands you send, and information needed to reply or send a scheduled message.</li>
+    <li><strong>Assistant content:</strong> tasks, reminders, preferences, notes, saved instructions and other information you choose to provide.</li>
+    <li><strong>Files and media:</strong> file names, types and sizes, plus the contents of photos, audio, video or other files you choose to send or upload. Media may be sent to Gemini for analysis when that feature is used.</li>
+    <li><strong>Google connection:</strong> authorization data and tokens needed for the workflow to access Google services you authorize. The exact Google permissions are displayed during authorization.</li>
+  </ul>
+
+  <h2>How Google data is used</h2>
+  <p>The intended design lets each user connect their own Google account and use Google Sheets and Google Drive for that user's assistant data and files. The workflow may create, read or update app-related Sheets and Drive files as allowed by the permissions shown on Google's consent screen. Do not approve the connection if the requested access is broader than you expect.</p>
+  <p>Google data is used to provide the assistant features you request, such as retrieving or updating your tasks and notes, saving an uploaded file, or preparing a reply. Data needed for a reply may be processed by the AI service described below.</p>
+
+  <h2>How information is processed and stored</h2>
+  <ul>
+    <li><strong>Telegram:</strong> carries messages between you and the bot and may retain chat content under Telegram's own settings and policies.</li>
+    <li><strong>n8n:</strong> runs the bot's workflows and scheduled tasks. The n8n instance may process Telegram IDs, messages, Google authorization data and workflow results. The project owner or n8n administrator may be able to access workflow data, credentials and execution logs. Log retention depends on the n8n instance's configuration.</li>
+    <li><strong>Google Sheets and Drive:</strong> intended to hold app-related assistant records and uploaded files in the connected user's Google account. Files saved there remain in that account until deleted.</li>
+    <li><strong>Gemini API:</strong> selected message text, relevant context and media may be sent to Gemini when the workflow requests an AI answer or analysis. The unpaid-service warning above applies.</li>
+  </ul>
+  <p>The service is designed to associate each Telegram user with that user's own Google connection and records. This is application-level separation, not end-to-end encryption. The operator and providers listed above may process data to run the service. Do not treat the service as private from its operator or use it for information that must remain confidential.</p>
+
+  <h2>Sharing and sale</h2>
+  <p>DumE Assistant is not intended to sell your information or use Google data for advertising. Information is processed by Telegram, Google, Gemini and the n8n hosting provider as needed to operate the features you request. If additional integrations are enabled later, this policy must be updated before they are used with your data.</p>
+
+  <h2>Retention</h2>
+  <p>Assistant records and uploaded files may remain in your Google Sheet or Drive until you delete them. n8n may retain credentials, workflow state and execution records while needed to operate the service; execution-log retention depends on the configuration of the n8n instance. Telegram chat history is controlled separately in Telegram. Deleting one copy does not automatically remove copies held by another provider.</p>
+
+  <h2>Your choices and deletion</h2>
+  <ul>
+    <li>You can revoke DumE Assistant's Google access from <a href="https://myaccount.google.com/permissions">your Google Account connections</a>. Revocation stops future access but does not automatically delete files already saved in Google Drive or Sheets.</li>
+    <li>You can delete the assistant's Sheet or uploaded files from your own Google account.</li>
+    <li>To request removal of the bot's saved records or access-list entry, message the operator through the Telegram bot. If a <code>/delete_my_data</code> command is enabled in your bot, you may use it; otherwise request deletion directly. The operator must also remove relevant n8n records and credentials.</li>
+  </ul>
+
+  <h2>Security and updates</h2>
+  <p>The workflow is intended to restrict Telegram access to approved users and keep each user's Google connection separate. These protections depend on the deployed workflow and its configuration. The operator should review access controls and execution-log retention before public launch. This policy will be updated if data practices or integrations change.</p>
+
+  <footer>
+    <p><a href="about.html">About DumE Assistant</a> · <a href="index.html">Upload Portal</a></p>
+  </footer>
+</main>
+</body>
+</html>
